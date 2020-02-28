@@ -13,8 +13,8 @@
 
 
 struct Match {
-	char type[5], home_team[4], away_team[4];
-	int game_id, week, season, home_score, away_score;
+	char type[5], home_team[4], away_team[4], week[4], season[5], home_score[4], away_score[4];
+	int game_id;
 };
 
 struct Match matches[MAXLINE];
@@ -34,8 +34,40 @@ void respond(int connfd) {
 	char buf[MAXLINE];
 	while((n = read(connfd, buf, MAXLINE)) != 0) {
 		printf("%d %s\n", n, buf);
+		// searchdb
 		write(connfd, buf, n);
 	}
+}
+
+char* searchdb(int gameid, char* query) {
+	int i;
+	for (i = 0; i < MAXLINE; ++i) {
+		if (matches[i].game_id == gameid) {
+			
+			if (strcmp(query, "type") == 0) {
+				return matches[i].type;
+			}
+			else if (strcmp(query, "home_team") == 0) {
+				return matches[i].home_team;
+			}
+			else if (strcmp(query, "away_team") == 0) {
+				return matches[i].away_team;
+			}
+			else if (strcmp(query, "week") == 0) {
+				return matches[i].week;
+			}
+			else if (strcmp(query, "season") == 0) {
+				return matches[i].season;
+			}
+			else if (strcmp(query, "home_score") == 0) {
+				return matches[i].home_score;
+			}
+			else if (strcmp(query, "away_score") == 0) {
+				return matches[i].away_score;
+			}
+		}
+	}
+	return "unknown";
 }
 
 void loadfile(char* filename) {
@@ -58,22 +90,26 @@ void loadfile(char* filename) {
 		int game_id = atoi(strtok(NULL, ","));
 		char* home_team = strtok(NULL, ",");
 		char* away_team = strtok(NULL, ",");
-		int week = atoi(strtok(NULL, ","));
-		int season = atoi(strtok(NULL, ","));
-		int home_score = atoi(strtok(NULL, ","));
-		int away_score = atoi(strtok(NULL, ","));
+		char* week = strtok(NULL, ",");
+		char* season = strtok(NULL, ",");
+		char* home_score = strtok(NULL, ",");
+		char* away_score = strtok(NULL, ",");
 		
 		// printf("%d: %s %d %s %s %d %d %d %d \n", linenum, type, game_id, home_team, away_team, week, season, home_score, away_score);
 		
 		struct Match match;
 		match.game_id = game_id;
-		match.week = week;
-		match.season = season;
-		match.home_score = home_score;
-		match.away_score = away_score;
+		// match.week = week;
+		// match.season = season;
+		// match.home_score = home_score;
+		// match.away_score = away_score;
 		strcpy(match.type, type);
 		strcpy(match.home_team, home_team);
 		strcpy(match.away_team, away_team);
+		strcpy(match.week, week);
+		strcpy(match.season, season);
+		strcpy(match.home_score, home_score);
+		strcpy(match.away_score, away_score);
 		
 		// printf("type: %s\n", match.type);
 		// printf("id: %d\n", match.game_id);
@@ -101,24 +137,31 @@ int main(int argc, char * argv[])
 	char* dbfilename = argv[1];
 	loadfile(dbfilename); // load database
 	
-	int listenfd, connfd;
-	socklen_t clientlen;
-	struct sockaddr_storage clientaddr; /* Enough room for any addr*/
-	char client_hostname[MAXLINE], client_port[MAXLINE];
+	printf(searchdb(22, "type"));
+	printf(searchdb(2018090600, "home_team"));
+	printf(searchdb(2018090600, "home_score"));
+	printf(searchdb(2018090600, "away_team"));
+	printf(searchdb(2018090600, "away_score"));
 	
-	listenfd = open_listenfd(argv[2]);
 	
-	printf("server started\n");
+	// int listenfd, connfd;
+	// socklen_t clientlen;
+	// struct sockaddr_storage clientaddr; /* Enough room for any addr*/
+	// char client_hostname[MAXLINE], client_port[MAXLINE];
 	
-	while(1) {
-		clientlen = sizeof(struct sockaddr_storage); /* Important! */
-		connfd = accept(listenfd, (struct sockaddr_storage *)&clientaddr, &clientlen);
-		getnameinfo((struct sockaddr_storage *) &clientaddr, clientlen, client_hostname, MAXLINE, client_port, MAXLINE, 0);
-		printf("Connected to (%s, %s)\n", client_hostname, client_port);
-		//echo(connfd);
-		respond(connfd);
-		close(connfd);
-	}
+	// listenfd = open_listenfd(argv[2]);
+	
+	// printf("server started\n");
+	
+	// while(1) {
+		// clientlen = sizeof(struct sockaddr_storage); /* Important! */
+		// connfd = accept(listenfd, (struct sockaddr_storage *)&clientaddr, &clientlen);
+		// getnameinfo((struct sockaddr_storage *) &clientaddr, clientlen, client_hostname, MAXLINE, client_port, MAXLINE, 0);
+		// printf("Connected to (%s, %s)\n", client_hostname, client_port);
+		// //echo(connfd);
+		// respond(connfd);
+		// close(connfd);
+	// }
 	exit(0);
 }
 

@@ -57,7 +57,7 @@ void start(char * host, char * port)
 		{
 			if (strcmp(buffer, "quit\n") == 0)
 			{
-				exit(0);
+				break;
 			}
 			else if (
 				(strlen(buffer)-1) >= 0 && (strlen(buffer)-1) <= 256)
