@@ -12,6 +12,13 @@
 #define LISTENQ 100 /* SIZE OF QUEUE */
 
 
+struct Match {
+	char type[5], home_team[4], away_team[4];
+	int game_id, week, season, home_score, away_score;
+};
+
+struct Match matches[MAXLINE];
+
 void echo(int connfd)
 {
 	size_t n;
@@ -22,14 +29,76 @@ void echo(int connfd)
 	}
 }
 
+void loadfile(char* filename) {
+	FILE* dbfile;
+	char* line = NULL;
+	size_t len = 0;
+	ssize_t read;
+	int linenum = 1;
+	
+	dbfile = fopen(filename, "r");
+	if (dbfile == NULL)
+		return;
+	while ((read = getline(&line, &len, dbfile)) != -1) {
+		if (linenum == 1) {
+			linenum++;
+			continue;
+		}
+		
+		char* type = strtok(line, ","); // extract nextRooms
+		int game_id = atoi(strtok(NULL, ","));
+		char* home_team = strtok(NULL, ",");
+		char* away_team = strtok(NULL, ",");
+		int week = atoi(strtok(NULL, ","));
+		int season = atoi(strtok(NULL, ","));
+		int home_score = atoi(strtok(NULL, ","));
+		int away_score = atoi(strtok(NULL, ","));
+		
+		printf("%d: %s %d %s %s %d %d %d %d \n", linenum, type, game_id, home_team, away_team, week, season, home_score, away_score);
+		
+		struct Match match;
+		match.game_id = game_id;
+		match.week = week;
+		match.season = season;
+		match.home_score = home_score;
+		match.away_score = away_score;
+		strcpy(match.type, type);
+		strcpy(match.home_team, home_team);
+		strcpy(match.away_team, away_team);
+		
+		// printf("type: %s\n", match.type);
+		// printf("id: %d\n", match.game_id);
+		// printf("hometeam: %s\n", match.home_team);
+		// printf("awayteam: %s\n", match.away_team);
+		// printf("week: %d\n", match.week);
+		// printf("season: %d\n", match.season);
+		// printf("home_score: %d\n", match.home_score);
+		// printf("away_score: %d\n", match.away_score);
+		matches[linenum - 2] = match;
+		
+		if (linenum == 200)
+			break;
+		linenum++;
+	}
+	
+	// printf("%d\n", matches[198].game_id); // last element in array
+		
+	free(line);
+	printf("END\n");
+}
+
 
 int main(int argc, char * argv[])
 {
+	char* dbfilename = argv[1];
+	loadfile(dbfilename);
+	
 	int listenfd, connfd;
 	socklen_t clientlen;
 	struct sockaddr_storage clientaddr; /* Enough room for any addr*/
 	char client_hostname[MAXLINE], client_port[MAXLINE];
-	listenfd = open_listenfd(argv[1]);
+	
+	listenfd = open_listenfd(argv[2]);
 	
 	while(1) {
 		clientlen = sizeof(struct sockaddr_storage); /* Important! */
