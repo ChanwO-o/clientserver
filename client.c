@@ -12,6 +12,7 @@
 
 int open_clientfd(char * hostname, char * port)
 {
+
 	int clientfd;
 	struct addrinfo hints, *listp, *p;
 
@@ -19,6 +20,7 @@ int open_clientfd(char * hostname, char * port)
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_NUMERICSERV;
 	hints.ai_flags |= AI_ADDRCONFIG;
+
 	getaddrinfo(hostname, port, &hints, &listp);
 
 	for (p=listp; p; p = p->ai_next)
@@ -46,16 +48,62 @@ void start(char * host, char * port)
 
 	int clientfd;
 
-	clientfd = open_clientfd(host, port);
+	//clientfd = open_clientfd(host, port);
 
-	while (fgets(buffer, MAXLINE, stdin) != NULL)
+	while (1)
 	{
-		write(clientfd, buffer, strlen(buffer));
-		read(clientfd, buffer, MAXLINE);
-		fputs(buffer, stdout);
+		printf("> ");
+		if (fgets(buffer, MAXLINE, stdin) != NULL)
+		{
+			if (strcmp(buffer, "quit\n") == 0)
+			{
+				exit(0);
+			}
+			else if (
+				(strlen(buffer)-1) >= 0 && (strlen(buffer)-1) <= 256)
+			{
+				char info[256];
+				char bitesize = strlen(buffer)-1;
+
+				info[0] = bitesize;
+				strcpy(info+1, buffer);
+
+				//strcpy(info, bitesize);
+				//strcpy(info, buffer);
+
+				//printf("%s\n", info);
+
+
+
+				/*
+
+
+				info[0] = bitesize;
+
+				unsigned int l = (unsigned int)info[0];
+				printf("%d\n", l);
+				printf("%c\n", length);
+				*/
+
+
+			} 
+
+			
+			// write(clientfd, buffer, strlen(buffer));
+			// read(clientfd, buffer, MAXLINE);
+			// fputs(buffer, stdout);
+		}
 	}
 
-	close(clientfd);
+	// while (fgets(buffer, MAXLINE, stdin) != NULL)
+	// {
+	// 	printf("> ");
+	// 	write(clientfd, buffer, strlen(buffer));
+	// 	read(clientfd, buffer, MAXLINE);
+	// 	fputs(buffer, stdout);
+	// }
+
+	//close(clientfd);
 	exit(0);
 
 	// while(1)
