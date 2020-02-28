@@ -45,10 +45,11 @@ int open_clientfd(char * hostname, char * port)
 void start(char * host, char * port)
 {
 	char buffer[MAXLINE];
+	char serverbuf[MAXLINE];
 
 	int clientfd;
 
-	//clientfd = open_clientfd(host, port);
+	clientfd = open_clientfd(host, port);
 
 	while (1)
 	{
@@ -68,27 +69,10 @@ void start(char * host, char * port)
 				info[0] = bitesize;
 				strcpy(info+1, buffer);
 
-				//strcpy(info, bitesize);
-				//strcpy(info, buffer);
-
-				//printf("%s\n", info);
-
-
-
-				/*
-
-
-				info[0] = bitesize;
-
-				unsigned int l = (unsigned int)info[0];
-				printf("%d\n", l);
-				printf("%c\n", length);
-				*/
-
-
-			} 
-
-			
+				write(clientfd, info, strlen(info));
+				read(clientfd, serverbuf, MAXLINE);
+				fputs(serverbuf, stdout);
+			} 			
 			// write(clientfd, buffer, strlen(buffer));
 			// read(clientfd, buffer, MAXLINE);
 			// fputs(buffer, stdout);
@@ -103,7 +87,7 @@ void start(char * host, char * port)
 	// 	fputs(buffer, stdout);
 	// }
 
-	//close(clientfd);
+	close(clientfd);
 	exit(0);
 
 	// while(1)
