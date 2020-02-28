@@ -29,16 +29,6 @@ void echo(int connfd)
 	}
 }
 
-void respond(int connfd) {
-	size_t n;
-	char buf[MAXLINE];
-	while((n = read(connfd, buf, MAXLINE)) != 0) {
-		printf("%d %s\n", n, buf);
-		// searchdb
-		write(connfd, buf, n);
-	}
-}
-
 char* searchdb(int gameid, char* query) {
 	int i;
 	for (i = 0; i < MAXLINE; ++i) {
@@ -68,6 +58,52 @@ char* searchdb(int gameid, char* query) {
 		}
 	}
 	return "unknown";
+}
+
+
+void respond(int connfd) {
+	size_t n;
+	char buf[MAXLINE];
+	while((n = read(connfd, buf, MAXLINE)) != 0) {
+		// printf("%d %s#\n", n, buf);
+		int bytesize = buf[0];
+		char input[bytesize+1];
+		strncpy(input, buf+1, bytesize);
+		input[bytesize] = '\0';
+		// printf("input: %s, bytesize: %d\n", input, bytesize);
+		
+		
+		char* token = strtok(input, " ");
+		// printf("gameid: %s  atoi: %d\n", to, atoi(gameid));
+		if (atoi(token) == 0) { // first arg is not integer
+			char unknownres[256];
+			char unknownsz = strlen("unknown");
+			unknownres[0] = unknownsz;
+			strcpy(unknownres+1, "unknown");
+			
+			write(connfd, unknownres, n);
+		}
+		else {
+			if (token != NULL)
+			{
+				int gameid = atoi(token);
+				token = strtok(NULL, " ");
+				
+				if (token != NULL)
+				{
+					char * field = token;
+					char* response = searchdb(gameid, field);
+					
+					char info[256];
+					char bytesize = strlen(response);
+					info[0] = bytesize;
+					strcpy(info+1, response);
+					
+					write(connfd, info, strlen(info));
+				}
+			}
+		}
+	}
 }
 
 void loadfile(char* filename) {
@@ -137,31 +173,31 @@ int main(int argc, char * argv[])
 	char* dbfilename = argv[1];
 	loadfile(dbfilename); // load database
 	
-	printf(searchdb(22, "type"));
-	printf(searchdb(2018090600, "home_team"));
-	printf(searchdb(2018090600, "home_score"));
-	printf(searchdb(2018090600, "away_team"));
-	printf(searchdb(2018090600, "away_score"));
+	// printf(searchdb(22, "type"));
+	// printf(searchdb(2018090600, "home_team"));
+	// printf(searchdb(2018090600, "home_score"));
+	// printf(searchdb(2018090600, "away_team"));
+	// printf(searchdb(2018090600, "away_score"));
 	
 	
-	// int listenfd, connfd;
-	// socklen_t clientlen;
-	// struct sockaddr_storage clientaddr; /* Enough room for any addr*/
-	// char client_hostname[MAXLINE], client_port[MAXLINE];
+	int listenfd, connfd;
+	socklen_t clientlen;
+	struct sockaddr_storage clientaddr; /* Enough room for any addr*/
+	char client_hostname[MAXLINE], client_port[MAXLINE];
 	
-	// listenfd = open_listenfd(argv[2]);
+	listenfd = open_listenfd(argv[2]);
 	
-	// printf("server started\n");
+	printf("server started\n");
 	
-	// while(1) {
-		// clientlen = sizeof(struct sockaddr_storage); /* Important! */
-		// connfd = accept(listenfd, (struct sockaddr_storage *)&clientaddr, &clientlen);
-		// getnameinfo((struct sockaddr_storage *) &clientaddr, clientlen, client_hostname, MAXLINE, client_port, MAXLINE, 0);
-		// printf("Connected to (%s, %s)\n", client_hostname, client_port);
-		// //echo(connfd);
-		// respond(connfd);
-		// close(connfd);
-	// }
+	while(1) {
+		clientlen = sizeof(struct sockaddr_storage); /* Important! */
+		connfd = accept(listenfd, (struct sockaddr_storage *)&clientaddr, &clientlen);
+		getnameinfo((struct sockaddr_storage *) &clientaddr, clientlen, client_hostname, MAXLINE, client_port, MAXLINE, 0);
+		printf("Connected to (%s, %s)\n", client_hostname, client_port);
+		//echo(connfd);
+		respond(connfd);
+		close(connfd);
+	}
 	exit(0);
 }
 

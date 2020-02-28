@@ -55,7 +55,8 @@ void start(char * host, char * port)
 		printf("> ");
 		if (fgets(buffer, MAXLINE, stdin) != NULL)
 		{
-			if (strcmp(buffer, "quit\n") == 0)
+			strtok(buffer, "\n"); // remove newline
+			if (strcmp(buffer, "quit") == 0)
 			{
 				break;
 			}
@@ -63,14 +64,21 @@ void start(char * host, char * port)
 				(strlen(buffer)-1) >= 0 && (strlen(buffer)-1) <= 256)
 			{
 				char info[256];
-				char bitesize = strlen(buffer)-1;
+				char bitesize = strlen(buffer);
 
 				info[0] = bitesize;
 				strcpy(info+1, buffer);
 
 				write(clientfd, info, strlen(info));
 				read(clientfd, buffer, MAXLINE);
-				fputs(buffer, stdout);
+				
+				int responsesz = buffer[0];
+				char response[responsesz+1];
+				strncpy(response, buffer+1, responsesz);
+				response[responsesz] = '\0';				
+			
+				fputs(response, stdout);
+				printf("\n");
 			} 			
 			// write(clientfd, buffer, strlen(buffer));
 			// read(clientfd, buffer, MAXLINE);
