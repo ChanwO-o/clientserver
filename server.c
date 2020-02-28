@@ -29,6 +29,15 @@ void echo(int connfd)
 	}
 }
 
+void respond(int connfd) {
+	size_t n;
+	char buf[MAXLINE];
+	while((n = read(connfd, buf, MAXLINE)) != 0) {
+		printf("%d %s\n", n, buf);
+		write(connfd, buf, n);
+	}
+}
+
 void loadfile(char* filename) {
 	FILE* dbfile;
 	char* line = NULL;
@@ -54,7 +63,7 @@ void loadfile(char* filename) {
 		int home_score = atoi(strtok(NULL, ","));
 		int away_score = atoi(strtok(NULL, ","));
 		
-		printf("%d: %s %d %s %s %d %d %d %d \n", linenum, type, game_id, home_team, away_team, week, season, home_score, away_score);
+		// printf("%d: %s %d %s %s %d %d %d %d \n", linenum, type, game_id, home_team, away_team, week, season, home_score, away_score);
 		
 		struct Match match;
 		match.game_id = game_id;
@@ -84,14 +93,13 @@ void loadfile(char* filename) {
 	// printf("%d\n", matches[198].game_id); // last element in array
 		
 	free(line);
-	printf("END\n");
 }
 
 
 int main(int argc, char * argv[])
 {
 	char* dbfilename = argv[1];
-	loadfile(dbfilename);
+	loadfile(dbfilename); // load database
 	
 	int listenfd, connfd;
 	socklen_t clientlen;
@@ -100,12 +108,15 @@ int main(int argc, char * argv[])
 	
 	listenfd = open_listenfd(argv[2]);
 	
+	printf("server started\n");
+	
 	while(1) {
 		clientlen = sizeof(struct sockaddr_storage); /* Important! */
 		connfd = accept(listenfd, (struct sockaddr_storage *)&clientaddr, &clientlen);
 		getnameinfo((struct sockaddr_storage *) &clientaddr, clientlen, client_hostname, MAXLINE, client_port, MAXLINE, 0);
 		printf("Connected to (%s, %s)\n", client_hostname, client_port);
-		echo(connfd);
+		//echo(connfd);
+		respond(connfd);
 		close(connfd);
 	}
 	exit(0);

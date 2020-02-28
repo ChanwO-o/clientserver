@@ -45,7 +45,6 @@ int open_clientfd(char * hostname, char * port)
 void start(char * host, char * port)
 {
 	char buffer[MAXLINE];
-	char serverbuf[MAXLINE];
 
 	int clientfd;
 
@@ -70,8 +69,8 @@ void start(char * host, char * port)
 				strcpy(info+1, buffer);
 
 				write(clientfd, info, strlen(info));
-				read(clientfd, serverbuf, MAXLINE);
-				fputs(serverbuf, stdout);
+				read(clientfd, buffer, MAXLINE);
+				fputs(buffer, stdout);
 			} 			
 			// write(clientfd, buffer, strlen(buffer));
 			// read(clientfd, buffer, MAXLINE);
