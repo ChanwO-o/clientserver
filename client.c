@@ -86,7 +86,7 @@ void start(char * host, char * port)
 int main(int argc, char * argv[])
 {
     char * domainName = argv[1];
-    char * portnum = atoi(argv[2]);
+    char * portnum = argv[2];
 
     start(domainName, portnum);
 
