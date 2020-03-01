@@ -35,27 +35,35 @@ char* searchdb(char* gameidstr, char* query) {
 	for (i = 0; i < MAXLINE; ++i) {
 		if (matches[i].game_id == gameid) {
 			if (strcmp(query, "type") == 0) {
+				printf("%s %s\n", gameidstr, query);
 				return matches[i].type;
 			}
 			else if (strcmp(query, "game_id") == 0) {
+				printf("%s %s\n", gameidstr, query);
 				return gameidstr;
 			}
 			else if (strcmp(query, "home_team") == 0) {
+				printf("%s %s\n", gameidstr, query);
 				return matches[i].home_team;
 			}
 			else if (strcmp(query, "away_team") == 0) {
+				printf("%s %s\n", gameidstr, query);
 				return matches[i].away_team;
 			}
 			else if (strcmp(query, "week") == 0) {
+				printf("%s %s\n", gameidstr, query);
 				return matches[i].week;
 			}
 			else if (strcmp(query, "season") == 0) {
+				printf("%s %s\n", gameidstr, query);
 				return matches[i].season;
 			}
 			else if (strcmp(query, "home_score") == 0) {
+				printf("%s %s\n", gameidstr, query);
 				return matches[i].home_score;
 			}
 			else if (strcmp(query, "away_score") == 0) {
+				printf("%s %s\n", gameidstr, query);
 				return matches[i].away_score;
 			}
 		}
