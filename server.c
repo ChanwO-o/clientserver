@@ -29,11 +29,11 @@ void echo(int connfd)
 	}
 }
 
-char* searchdb(int gameid, char* query) {
+char* searchdb(char* gameidstr, char* query) {
+	int gameid = atoi(gameidstr);
 	int i;
 	for (i = 0; i < MAXLINE; ++i) {
 		if (matches[i].game_id == gameid) {
-			
 			if (strcmp(query, "type") == 0) {
 				return matches[i].type;
 			}
@@ -86,13 +86,13 @@ void respond(int connfd) {
 		else {
 			if (token != NULL)
 			{
-				int gameid = atoi(token);
+				char* gameidstr = token;
 				token = strtok(NULL, " ");
 				
 				if (token != NULL)
 				{
 					char * field = token;
-					char* response = searchdb(gameid, field);
+					char* response = searchdb(gameidstr, field);
 					
 					char info[256];
 					char bytesize = strlen(response);
