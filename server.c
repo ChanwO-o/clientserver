@@ -129,16 +129,12 @@ void loadfile(char* filename) {
 		char* week = strtok(NULL, ",");
 		char* season = strtok(NULL, ",");
 		char* home_score = strtok(NULL, ",");
-		char* away_score = strtok(NULL, ",");
+		char* away_score = strtok(NULL, ",\n");
 		
 		// printf("%d: %s %d %s %s %d %d %d %d \n", linenum, type, game_id, home_team, away_team, week, season, home_score, away_score);
 		
 		struct Match match;
 		match.game_id = game_id;
-		// match.week = week;
-		// match.season = season;
-		// match.home_score = home_score;
-		// match.away_score = away_score;
 		strcpy(match.type, type);
 		strcpy(match.home_team, home_team);
 		strcpy(match.away_team, away_team);
@@ -147,23 +143,13 @@ void loadfile(char* filename) {
 		strcpy(match.home_score, home_score);
 		strcpy(match.away_score, away_score);
 		
-		// printf("type: %s\n", match.type);
-		// printf("id: %d\n", match.game_id);
-		// printf("hometeam: %s\n", match.home_team);
-		// printf("awayteam: %s\n", match.away_team);
-		// printf("week: %d\n", match.week);
-		// printf("season: %d\n", match.season);
-		// printf("home_score: %d\n", match.home_score);
-		// printf("away_score: %d\n", match.away_score);
 		matches[linenum - 2] = match;
 		
 		if (linenum == 200)
 			break;
 		linenum++;
 	}
-	
 	// printf("%d\n", matches[198].game_id); // last element in array
-		
 	free(line);
 }
 
