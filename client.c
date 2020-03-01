@@ -1,3 +1,4 @@
+// Chan Woo Park 26984415 Min Sung Cha 85408485
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -6,7 +7,7 @@
 #include <netdb.h>
 #include <stdlib.h>
 
-//MACROS
+
 #define MAXLINE 200
 
 
@@ -45,9 +46,7 @@ int open_clientfd(char * hostname, char * port)
 void start(char * host, char * port)
 {
 	char buffer[MAXLINE];
-
 	int clientfd;
-
 	clientfd = open_clientfd(host, port);
 
 	while (1)
@@ -80,46 +79,11 @@ void start(char * host, char * port)
 				fputs(response, stdout);
 				printf("\n");
 			} 			
-			// write(clientfd, buffer, strlen(buffer));
-			// read(clientfd, buffer, MAXLINE);
-			// fputs(buffer, stdout);
 		}
 	}
 
-	// while (fgets(buffer, MAXLINE, stdin) != NULL)
-	// {
-	// 	printf("> ");
-	// 	write(clientfd, buffer, strlen(buffer));
-	// 	read(clientfd, buffer, MAXLINE);
-	// 	fputs(buffer, stdout);
-	// }
-
 	close(clientfd);
 	exit(0);
-
-	// while(1)
-	// {
-	// 	printf("> ");
-	// 	fgets(buffer, MAXLINE, stdin);
-
-	// 	char * game_id;
-	// 	char * field;
-
-	// 	char * cmd = strtok(buffer, " \t\n");
-	// 	if (strcmp(cmd, "quit") == 0)
-	// 	{
-	// 		break;
-	// 	}
-	// 	else if (cmd != NULL)
-	// 	{
-	// 		game_id = atoi(cmd);
-	// 		cmd = strtok(NULL, " ");
-	// 		if (cmd != NULL)
-	// 		{
-	// 			field = cmd;
-	// 		}
-	// 	}
-	// }
 }
 
 int main(int argc, char * argv[])

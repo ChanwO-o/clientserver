@@ -1,3 +1,4 @@
+// Chan Woo Park 26984415 Min Sung Cha 85408485
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -80,7 +81,6 @@ void respond(int connfd) {
 		strncpy(input, buf+1, bytesize);
 		input[bytesize] = '\0';
 		// printf("input: %s, bytesize: %d\n", input, bytesize);
-		
 		
 		char* token = strtok(input, " ");
 		// printf("gameid: %s  atoi: %d\n", to, atoi(gameid));
@@ -184,7 +184,7 @@ int main(int argc, char * argv[])
 		clientlen = sizeof(struct sockaddr_storage); /* Important! */
 		connfd = accept(listenfd, (struct sockaddr_storage *)&clientaddr, &clientlen);
 		getnameinfo((struct sockaddr_storage *) &clientaddr, clientlen, client_hostname, MAXLINE, client_port, MAXLINE, 0);
-		printf("Connected to (%s, %s)\n", client_hostname, client_port);
+		// printf("Connected to (%s, %s)\n", client_hostname, client_port);
 		//echo(connfd);
 		respond(connfd);
 		close(connfd);
