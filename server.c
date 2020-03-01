@@ -37,6 +37,9 @@ char* searchdb(char* gameidstr, char* query) {
 			if (strcmp(query, "type") == 0) {
 				return matches[i].type;
 			}
+			else if (strcmp(query, "game_id") == 0) {
+				return gameidstr;
+			}
 			else if (strcmp(query, "home_team") == 0) {
 				return matches[i].home_team;
 			}
@@ -159,12 +162,8 @@ int main(int argc, char * argv[])
 	char* dbfilename = argv[1];
 	loadfile(dbfilename); // load database
 	
-	// printf(searchdb(22, "type"));
-	// printf(searchdb(2018090600, "home_team"));
-	// printf(searchdb(2018090600, "home_score"));
-	// printf(searchdb(2018090600, "away_team"));
-	// printf(searchdb(2018090600, "away_score"));
-	
+	// printf(searchdb("2018090600", "away_team"));
+	// printf(searchdb("2018090600", "away_score"));
 	
 	int listenfd, connfd;
 	socklen_t clientlen;
